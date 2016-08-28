@@ -1,0 +1,67 @@
+/*
+   For Electrocardiogram Display in Processing
+   using Arduino UNO R3 with Olimex EKG/EMG Shield
+*/
+
+import processing.serial.*;
+
+Serial myPort;  // The serial port
+
+int counter = 0;
+int inByte = 0;
+float x1, y1, x2, y2, y;
+float spacing = 1.0;
+
+color RED = color(255, 0, 0);
+color GREEN = color(0, 255, 0);
+color BLUE = color(12, 16, 255);
+color WHITE = color(255, 255, 255);
+color BLACK = color(0, 0, 0);
+
+void setup () {
+size(800, 400); // window size
+ // **** List available serial ports **** //
+  String[] ports = Serial.list();
+  print("No. ports = ");
+  println(ports.length);
+  for (int i = 0; i < ports.length; i++) {
+    print("[" + i + "]");
+  println(ports[i]);
+  }
+// **** Enter selected port number here **** //
+  String portName = Serial.list()[7];
+  print("port selected = ");
+  println(portName);
+  myPort = new Serial(this, portName, 9600);
+  background(BLUE);
+}
+
+void serialEvent (Serial myPort) {
+  int inByte = myPort.read();
+  println(inByte);
+  y = height - inByte;
+}
+
+void draw () {
+// line color:
+  stroke(WHITE);
+ 
+if (counter > width/spacing) {
+    counter = 0;
+    background(BLUE);
+   }
+   
+   if (counter == 0) {
+       x1 = 0;
+       y1 = y;
+   }
+   
+   if (counter > 0) {
+     x2 = counter*spacing;
+     y2 = y;
+     line(x1, y1, x2, y2);
+     x1 = x2;
+     y1 = y2;    
+    }    
+   counter++;
+}
